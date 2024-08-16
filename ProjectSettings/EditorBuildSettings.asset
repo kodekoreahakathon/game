@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CharacterSelect.unity
+    guid: 9a9b3f57df72caa44af65c3a090ed653
+  - enabled: 1
     path: Assets/Scenes/Mijeong.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/GrandMother.unity
+    guid: 50bd763b321a358448d3002d9c467b56
   m_configObjects: {}
