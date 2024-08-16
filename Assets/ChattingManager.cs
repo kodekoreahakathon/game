@@ -25,7 +25,8 @@ public class ChattingManager : MonoBehaviour
 
     public TMP_InputField inputField;
     public Button button;
-    public ScrollRect scrollRect;   
+    public ScrollRect scrollRect;
+    public RectTransform contentRect;
 
     private void Start()
     {
@@ -153,7 +154,7 @@ public class ChattingManager : MonoBehaviour
         MyChat m = Instantiate(myChat, chatParent).GetComponent<MyChat>();
 
         m.message.text = FixedText(message);
-
+        Canvas.ForceUpdateCanvases();
         inputField.text = "";
         inputField.interactable = false;
         button.interactable = false;
@@ -165,6 +166,7 @@ public class ChattingManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
         print(scrollRect.verticalNormalizedPosition);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
         Canvas.ForceUpdateCanvases();
 
         // 스크롤 위치를 가장 아래로 설정

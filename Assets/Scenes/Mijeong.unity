@@ -330,7 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 1
+  m_VerticalFit: 2
 --- !u!114 &143070288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,8 +350,8 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 20
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -870,6 +870,7 @@ MonoBehaviour:
   inputField: {fileID: 2000613596}
   button: {fileID: 1350841821}
   scrollRect: {fileID: 1394683351}
+  contentRect: {fileID: 143070286}
 --- !u!4 &1184767244
 Transform:
   m_ObjectHideFlags: 0
