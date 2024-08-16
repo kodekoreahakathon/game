@@ -862,6 +862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: "\uC190\uBBF8\uC815"
   chatParent: {fileID: 143070286}
+  baseUrl: https://port-0-girlfriendapi-lzuz68m2a0209e84.sel4.cloudtype.app
   serverUrl: https://port-0-girlfriendapi-lzuz68m2a0209e84.sel4.cloudtype.app/chat
   createThreadUrl: https://port-0-girlfriendapi-lzuz68m2a0209e84.sel4.cloudtype.app/create_thread
   incomingChatPrefab: {fileID: 1766183656525741682, guid: 65e95c8d1ebc5bc4e903900c820e364e, type: 3}
