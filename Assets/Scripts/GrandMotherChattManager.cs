@@ -27,16 +27,22 @@ public class GrandMotherChattManager : MonoBehaviour
     public Button button;
     public ScrollRect scrollRect;
     public RectTransform contentRect;
+    
+    private TextMeshProUGUI curTextUI;
+    private Coroutine curCoroutine;
+    private string curMessage;
+    private bool coroutine_isStarted;
 
-    private void Start()
+
+     private void Start()
     {
-        if (!PlayerPrefs.HasKey("grandmother_thread_id"))
+        if (!PlayerPrefs.HasKey("thread_id"))
         {
             StartCoroutine(GetThread());
         }
         else
         {
-            thread_id = PlayerPrefs.GetString("grandmother_thread_id");
+            thread_id = PlayerPrefs.GetString("thread_id");
             print(thread_id);
             StartCoroutine(GetMessages()); // 메시지를 가져옵니다.
         }
@@ -60,7 +66,7 @@ public class GrandMotherChattManager : MonoBehaviour
             ThreadResponse response = JsonUtility.FromJson<ThreadResponse>(jsonResponse);
 
             thread_id = response.thread_id;
-            PlayerPrefs.SetString("grandmother_thread_id", response.thread_id);
+            PlayerPrefs.SetString("thread_id", response.thread_id);
             Debug.Log("Thread ID: " + thread_id);
 
             // Get messages after creating the thread
@@ -110,6 +116,7 @@ public class GrandMotherChattManager : MonoBehaviour
 
     IEnumerator SendMessageToChat(string messageContent)
     {
+        ForceFixed();
         MessageBody messageBody = new MessageBody();
         messageBody.thread_id = thread_id;
         messageBody.msg = messageContent;
@@ -138,7 +145,10 @@ public class GrandMotherChattManager : MonoBehaviour
 
             IncomingChat text = Instantiate(incomingChatPrefab, chatParent).GetComponent<IncomingChat>();
             text.characterName.text = characterName;
-            text.message.text = FixedText(response.msg);
+            curTextUI = text.message;
+            curMessage = response.msg;
+            curCoroutine = text.StartCoroutine(TextGen(response.msg, text.message));
+            //text.message.text = FixedText(response.msg);
 
             inputField.interactable = true;
             button.interactable = true;
@@ -149,6 +159,10 @@ public class GrandMotherChattManager : MonoBehaviour
 
     public void SendMessage(string message)
     {
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
         StartCoroutine(SendMessageToChat(message));
 
         MyChat m = Instantiate(myChat, chatParent).GetComponent<MyChat>();
@@ -177,6 +191,26 @@ public class GrandMotherChattManager : MonoBehaviour
         //Debug.Log(minDelta);
         //contentRect.anchoredPosition = new Vector2(0, minDelta);
     }
+
+    void ForceFixed()
+    {
+        if (curTextUI == null)
+        {
+            return;
+        }
+        
+        if (coroutine_isStarted)
+        {
+            curTextUI.text = FixedText(curMessage);
+            curTextUI = null;
+            curMessage = "";
+            coroutine_isStarted = false;
+            StopCoroutine(curCoroutine);
+            curCoroutine = null;
+        }
+    }
+    
+    
     private string FixedText(string text)
     {
         string cleanedMessage = text.Replace("\r\n", " ").Replace("\n", " ");
@@ -200,6 +234,37 @@ public class GrandMotherChattManager : MonoBehaviour
             index++;
         }
 
+        coroutine_isStarted = false;
+
         return newMsg.ToString();
+    }
+
+    IEnumerator TextGen(string message, TextMeshProUGUI text)
+    {
+        coroutine_isStarted = true;
+        string cleanedMessage = message.Replace("\r\n", " ").Replace("\n", " ");
+        var newMsg = new StringBuilder();
+        int index = 0;
+
+        foreach (char c in cleanedMessage)
+        {
+            if (index == 0 && c == ' ') continue;
+            if (index >= 20)
+            {
+                newMsg.AppendLine();
+                index = 0;
+                if (c == ' ')
+                {
+                    continue;
+                }
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            newMsg.Append(c);
+            text.text = newMsg.ToString();
+            StartCoroutine(FixedToBottom());
+            index++;
+        }
+        coroutine_isStarted = false;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -27,6 +28,11 @@ public class ChattingManager : MonoBehaviour
     public Button button;
     public ScrollRect scrollRect;
     public RectTransform contentRect;
+
+    private TextMeshProUGUI curTextUI;
+    private Coroutine curCoroutine;
+    private string curMessage;
+    private bool coroutine_isStarted;
 
     private void Start()
     {
@@ -110,6 +116,7 @@ public class ChattingManager : MonoBehaviour
 
     IEnumerator SendMessageToChat(string messageContent)
     {
+        ForceFixed();
         MessageBody messageBody = new MessageBody();
         messageBody.thread_id = thread_id;
         messageBody.msg = messageContent;
@@ -138,7 +145,10 @@ public class ChattingManager : MonoBehaviour
 
             IncomingChat text = Instantiate(incomingChatPrefab, chatParent).GetComponent<IncomingChat>();
             text.characterName.text = characterName;
-            text.message.text = FixedText(response.msg);
+            curTextUI = text.message;
+            curMessage = response.msg;
+            curCoroutine = text.StartCoroutine(TextGen(response.msg, text.message));
+            //text.message.text = FixedText(response.msg);
 
             inputField.interactable = true;
             button.interactable = true;
@@ -149,6 +159,10 @@ public class ChattingManager : MonoBehaviour
 
     public void SendMessage(string message)
     {
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
         StartCoroutine(SendMessageToChat(message));
 
         MyChat m = Instantiate(myChat, chatParent).GetComponent<MyChat>();
@@ -178,6 +192,25 @@ public class ChattingManager : MonoBehaviour
         //contentRect.anchoredPosition = new Vector2(0, minDelta);
     }
 
+    void ForceFixed()
+    {
+        if (curTextUI == null)
+        {
+            return;
+        }
+        
+        if (coroutine_isStarted)
+        {
+            curTextUI.text = FixedText(curMessage);
+            curTextUI = null;
+            curMessage = "";
+            coroutine_isStarted = false;
+            StopCoroutine(curCoroutine);
+            curCoroutine = null;
+        }
+    }
+    
+    
     private string FixedText(string text)
     {
         string cleanedMessage = text.Replace("\r\n", " ").Replace("\n", " ");
@@ -201,7 +234,38 @@ public class ChattingManager : MonoBehaviour
             index++;
         }
 
+        coroutine_isStarted = false;
+
         return newMsg.ToString();
+    }
+
+    IEnumerator TextGen(string message, TextMeshProUGUI text)
+    {
+        coroutine_isStarted = true;
+        string cleanedMessage = message.Replace("\r\n", " ").Replace("\n", " ");
+        var newMsg = new StringBuilder();
+        int index = 0;
+
+        foreach (char c in cleanedMessage)
+        {
+            if (index == 0 && c == ' ') continue;
+            if (index >= 20)
+            {
+                newMsg.AppendLine();
+                index = 0;
+                if (c == ' ')
+                {
+                    continue;
+                }
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            newMsg.Append(c);
+            text.text = newMsg.ToString();
+            StartCoroutine(FixedToBottom());
+            index++;
+        }
+        coroutine_isStarted = false;
     }
 }
 
