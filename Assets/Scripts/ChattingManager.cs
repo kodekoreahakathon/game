@@ -29,6 +29,8 @@ public class ChattingManager : MonoBehaviour
     public ScrollRect scrollRect;
     public RectTransform contentRect;
 
+    [TextArea] [SerializeField] private string thread_idName;
+
     private TextMeshProUGUI curTextUI;
     private Coroutine curCoroutine;
     private string curMessage;
@@ -36,13 +38,13 @@ public class ChattingManager : MonoBehaviour
 
     private void Start()
     {
-        if (!PlayerPrefs.HasKey("thread_id"))
+        if (!PlayerPrefs.HasKey(thread_idName))
         {
             StartCoroutine(GetThread());
         }
         else
         {
-            thread_id = PlayerPrefs.GetString("thread_id");
+            thread_id = PlayerPrefs.GetString(thread_idName);
             print(thread_id);
             StartCoroutine(GetMessages()); // 메시지를 가져옵니다.
         }

@@ -1152,6 +1152,7 @@ MonoBehaviour:
   button: {fileID: 1350841821}
   scrollRect: {fileID: 1394683351}
   contentRect: {fileID: 143070286}
+  thread_idName: mijeong
 --- !u!4 &1184767244
 Transform:
   m_ObjectHideFlags: 0

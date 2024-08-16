@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GrandMother.unity
     guid: 50bd763b321a358448d3002d9c467b56
+  - enabled: 1
+    path: Assets/Scenes/Bocchi.unity
+    guid: cc2b1e0cee8ecf347aa8de2f154b90b5
   m_configObjects: {}
